@@ -1,4 +1,5 @@
 const express = require("express");
+const qs = require('qs')
 require("dotenv").config(); // A .env fájlt olvassa
 const trainingsRoutes = require('./routes/trainings.routes')
 const mongoose = require("mongoose");
@@ -12,7 +13,9 @@ database.on("error", (error) => {
 database.once("connected", () => {
     console.log(`Database Connected ${database.host}`);
 });
+
 const app = express()
+app.set("query parser", (str) => qs.parse(str));
 app.use(express.json())
 app.use('/api', trainingsRoutes)
 

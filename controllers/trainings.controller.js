@@ -11,8 +11,11 @@ exports.createTraining = async (req, res, next) => {
 
 exports.getAllTraining = async (req, res, next) => {
     try {
-        const trainings = await Training.find();
-        res.status(200).json({ success: true, data: trainings });
+        let queryStr = JSON.stringify(req.query)
+        // Kicseréljük a query-ben lévő lte sztringet $lte-re
+        queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
+        const trainings = await Training.find(JSON.parse(queryStr));
+        res.status(200).json({ success: true, count: trainings.length, data: trainings });
     } catch (error) {
         res.status(500).json({ success: false, msg: error.message });
     }
