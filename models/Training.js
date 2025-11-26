@@ -66,5 +66,16 @@ const TrainingSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+},
+{
+    toJSON: { virtuals: true},
+    toObject: {virtuals:true}
+});
+
+TrainingSchema.virtual("courses",{
+    ref: "Course",
+    localField: "_id",
+    foreignField: "training",
+    justOne: false
 });
 module.exports = mongoose.model("Training", TrainingSchema, "trainings");

@@ -51,7 +51,7 @@ exports.getAllTraining = async (req, res, next) => {
         }
 
         // result
-        const trainings = await query;
+        const trainings = await query.populate();
         res.status(200).json({ success: true, count: trainings.length, pagination, data: trainings });
     } catch (error) {
         res.status(500).json({ success: false, msg: error.message });
