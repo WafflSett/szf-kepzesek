@@ -67,15 +67,22 @@ const TrainingSchema = new mongoose.Schema({
         default: Date.now,
     },
 },
-{
-    toJSON: { virtuals: true},
-    toObject: {virtuals:true}
-});
+    {
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true }
+    });
 
-TrainingSchema.virtual("courses",{
+TrainingSchema.virtual("courses", {
     ref: "Course",
     localField: "_id",
     foreignField: "training",
     justOne: false
 });
+
+TrainingSchema.pre('remove', async function (next) {
+    console.log(`Courses being removed from bootcamp ${this._id}`);
+    await this.model('Course').deleteMany({ training: this._id })
+    next()
+})
+
 module.exports = mongoose.model("Training", TrainingSchema, "trainings");

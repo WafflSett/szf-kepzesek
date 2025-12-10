@@ -17,7 +17,7 @@ exports.getCourses = async (req, res, next) => {
                     select: '-_id name description'
                 })
 
-                // remove id and leave name + desc
+            // remove id and leave name + desc
         }
         const courses = await query
         if (courses.length === 0) {
@@ -33,11 +33,40 @@ exports.getCourses = async (req, res, next) => {
     }
 }
 
-// exports.createCourse = async (req, res, next) => {
-//     try {
-//         const course = await Course.create(req.body);
-//         res.status(201).json({ success: true, data: course });
-//     } catch (error) {
-//         res.status(400).json({ success: false, msg: error.message });
-//     }
-// }
+exports.createCourse = async (req, res, next) => {
+    try {
+        const course = await Course.create(req.body);
+        res.status(201).json({ success: true, data: course });
+    } catch (error) {
+        res.status(400).json({ success: false, msg: error.message });
+    }
+}
+
+exports.updateCourse = async (req, res, next) => {
+    try {
+        let course = await Course.findById(req.params.id)
+        if (!course) {
+            return next(new ErrorResponse(`No course with the id of ${req.params.id}`, 404))
+        }
+        course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true
+        })
+        res.status(200).json({ success: true, data: course })
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.deleteCourse = async (req, res, next) => {
+    try {
+        const course = await Course.findById(req.params.id)
+        if (!course) {
+            return next(new ErrorResponse(`No course with the id of ${req.params.id}`, 404))
+        }
+        await course.remove()
+        res.status(200).json({ success: true, data: {} })
+    } catch (error) {
+        next(error)
+    }
+}
