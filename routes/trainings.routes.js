@@ -11,7 +11,7 @@ router.get('/:id', trainings.getTraining)
 router.get('/:trainingId/courses', courses.getCourses)
 router.post('/:trainingId/courses', courses.createCourse)
 
-router.route('/:id/photo').put(trainings.trainingPhotoUpload)
+router.route('/:id/photo').post(trainings.trainingPhotoUpload)
 
 
 module.exports = router;

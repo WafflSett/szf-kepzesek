@@ -1,4 +1,6 @@
 const Training = require('../models/Training')
+require("dotenv").config();
+const path = require('path')
 
 exports.createTraining = async (req, res, next) => {
     try {
@@ -62,7 +64,7 @@ exports.getTraining = async (req, res, next) => {
     try {
         const training = await Training.findById(req.params.id);
         if (!training) {
-            return res.status(400).json({ success: false, msg: 'Not found' });
+            return res.status(400).json({ success: false, error: 'Not found' });
         }
         res.status(200).json({ success: true, data: training });
     } catch (error) {
@@ -77,7 +79,7 @@ exports.updateTraining = async (req, res, next) => {
             runValidators: true, // Ellenőrizze a frissített adatokat a modell
         });
         if (!training) {
-            return res.status(400).json({ success: false, msg: "Not found" });
+            return res.status(400).json({ success: false, error: "Not found" });
         }
         res.status(200).json({ success: true, data: training });
     } catch (error) {
@@ -89,7 +91,7 @@ exports.deleteTraining = async (req, res, next) => {
     try {
         const training = await Training.findByIdAndDelete(req.params.id);
         if (!training) {
-            return res.status(400).json({ success: false, msg: "Not found" });
+            return res.status(400).json({ success: false, error: "Not found" });
         }
         res.status(200).json({ success: true, data: {} });
     } catch (error) {
@@ -102,26 +104,26 @@ exports.trainingPhotoUpload = async (req, res, next) => {
         console.log(req.params.id);
         const training = await Training.findById(req.params.id);
         if (!training) {
-            return res.status(400).json({ success: false, msg: "Not found" });
+            return res.status(400).json({ success: false, error: "Not found" });
         }
 
         if (!req.files) {
-            return res.status(400).json({ success: false, msg: "Please upload a file" });
+            return res.status(400).json({ success: false, error: "Please upload a file" });
         }
         const file = req.files.file
         if (!file.mimetype.startsWith('image')) {
-            return res.status(400).json({ success: false, msg: "Please upload an image file" });
+            return res.status(400).json({ success: false, error: "Please upload an image file" });
         }
 
         if (file.size > process.env.MAX_FILE_UPLOAD) {
-            return res.status(400).json({ success: false, msg: `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}` });
+            return res.status(400).json({ success: false, error: `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}` });
         }
 
         file.name = `photo_${training.id}${path.parse(file.name).ext}`
         file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
             if (err) {
                 console.error(err);
-                return res.status(500).json({ success: false, msg: `Problem with file upload` });
+                return res.status(500).json({ success: false, error: `Problem with file upload` });
             }
         })
         await Training.findByIdAndUpdate(req.params.id, { photo: file.name })
@@ -132,6 +134,6 @@ exports.trainingPhotoUpload = async (req, res, next) => {
 
 
     } catch (error) {
-        res.status(400).json({ success: false });
+        res.status(400).json({ success: false, error: error.message });
     }
 }
