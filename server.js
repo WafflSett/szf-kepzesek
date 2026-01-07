@@ -3,6 +3,7 @@ const qs = require('qs')
 require("dotenv").config(); // A .env fájlt olvassa
 const trainingsRoutes = require('./routes/trainings.routes')
 const coursesRoutes = require('./routes/courses.routes')
+const auth = require('./routes/auth.routes')
 const fileupload = require('express-fileupload')
 const errorHandler = require('./middleware/error')
 
@@ -24,6 +25,7 @@ app.use(express.json())
 app.use(fileupload())
 app.use(express.static("public"));
 
+app.use("/api/auth", auth);
 app.use('/api/trainings', trainingsRoutes)
 app.use('/api/courses', coursesRoutes)
 app.use(errorHandler)
