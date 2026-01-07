@@ -19,8 +19,8 @@ database.once("connected", () => {
 });
 
 const app = express()
-app.use(express.json())
 app.set("query parser", (str) => qs.parse(str));
+app.use(express.json())
 app.use(fileupload())
 app.use(express.static("public"));
 
